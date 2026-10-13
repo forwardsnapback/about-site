@@ -3,14 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- Security: only load scripts from this site, fonts from Google, and only send form data to Formspree.
-     If you add Umami, add its script URL to script-src and its host to connect-src.
+<!-- Security: only load scripts from this site and Umami, fonts from Google, and only send data to Formspree and Umami.
      If you edit the inline script below, its sha256 hash in script-src must be updated. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-/x7W7R75k8Roq0WaVRQX9blP4OufE5xbAdzklGxsgpw='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://formspree.io; form-action https://formspree.io; base-uri 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cloud.umami.is 'sha256-/x7W7R75k8Roq0WaVRQX9blP4OufE5xbAdzklGxsgpw='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://formspree.io https://gateway.umami.is; form-action https://formspree.io; base-uri 'none'; object-src 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<!-- TODO: paste the Umami tracking snippet here -->
+<!-- Analytics: Umami -->
+<script defer src="https://cloud.umami.is/script.js" data-website-id="4ddb628d-ce10-476f-ab45-2bf4b5019881"></script>
 <title>Stephanie Elder · IT, networking &amp; security</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://stephanie-elder.com/">
+<meta name="description" content="IT at an MSP: untangling networks, Microsoft 365, identity, and security for small and medium-sized businesses. Plus bike touring, piano, and Beebo the Shih Tzu.">
+<!-- link previews (LinkedIn, Slack, iMessage...) -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://stephanie-elder.com/">
+<meta property="og:site_name" content="Stephanie Elder">
+<meta property="og:title" content="Stephanie Elder · IT, networking &amp; security">
+<meta property="og:description" content="IT at an MSP: untangling networks, Microsoft 365, identity, and security for small and medium-sized businesses. Plus bike touring, piano, and Beebo the Shih Tzu.">
+<meta property="og:image" content="https://stephanie-elder.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+<meta property="og:image:alt" content="Stephanie Elder: IT, networking and security, in glowing maroon type">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0a0306">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -86,13 +99,6 @@
     animation: sheen 9s ease-in-out infinite;
   }
   @keyframes sheen { 0%, 100% { background-position: 100% 0; } 50% { background-position: 0% 0; } }
-
-  /* ── placeholders: visible until you toggle them off ── */
-  .ph {
-    background: rgba(255, 143, 171, .1); outline: 1px dashed var(--line-strong);
-    border-radius: 2px; padding: 0 3px;
-  }
-  body.clean .ph { background: none; outline: none; padding: 0; }
 
   /* ── HUD panel ── */
   .hud {
@@ -214,13 +220,6 @@
   }
   .hero p.lede { font-size: 17px; color: var(--muted); margin: 0; }
   .hero p.lede strong { color: var(--ink); font-weight: 600; }
-  .readout {
-    position: relative; margin-top: 18px; display: flex; flex-wrap: wrap; gap: 6px 18px;
-    font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
-  }
-  .readout b { color: var(--rose); font-weight: 500; }
-  .blink { animation: blink 1.6s steps(2, start) infinite; }
-  @keyframes blink { to { visibility: hidden; } }
 
   /* ── sections ── */
   section, footer { padding: 44px 0; }
@@ -348,8 +347,19 @@
 
   @media (max-width: 640px) {
     .hero .emblem { width: 320px; height: 320px; right: -110px; top: -10px; opacity: .4; }
+    nav { padding: 10px 0 6px; row-gap: 4px; }
     nav .brand { width: 100%; }
-    nav .links a { padding: 5px 9px 5px 18px; font-size: 12px; }
+    /* menu becomes one row that scrolls sideways; the fade on the right hints there's more */
+    nav .links {
+      width: 100%; flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain;
+      scrollbar-width: none; -webkit-overflow-scrolling: touch;
+      -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
+              mask-image: linear-gradient(90deg, #000 85%, transparent);
+      padding-right: 24px;
+    }
+    nav .links::-webkit-scrollbar { display: none; }
+    nav .links li { flex: none; }
+    nav .links a { padding: 5px 9px 5px 18px; font-size: 12px; white-space: nowrap; }
     nav .links a::before { left: 4px; }
   }
   @media (max-width: 520px) {
@@ -412,10 +422,6 @@
         Here's the stuff I'd tell you over coffee.
       </p>
     </div>
-    <div class="readout" aria-hidden="true">
-      <span>status <b>online<span class="blink">_</span></b></span>
-      <span>mode <b>about me</b></span>
-    </div>
   </header>
 
   <section id="now" class="reveal">
@@ -445,13 +451,13 @@
     <div class="cards">
       <div class="hud card">
         <div class="idx">A-01</div>
-        <h3>Entra ID</h3>
-        <p>Users, groups, and access in Microsoft Entra ID, plus the conditional access policies that decide who gets in.</p>
+        <h3>Identity</h3>
+        <p>Users, groups, and conditional access in Microsoft Entra ID. For clients still running on-prem, I manage file servers with Active Directory and Group Policy, then tie it all together with Entra Connect.</p>
       </div>
       <div class="hud card">
         <div class="idx">A-02</div>
-        <h3>M365 migrations</h3>
-        <p>I move email, files, and Teams over to Microsoft 365. I've migrated hundreds of mailboxes and users from on-premises servers to the cloud.</p>
+        <h3>M365 &amp; SharePoint</h3>
+        <p>I've moved hundreds of mailboxes and users from on-prem servers into Microsoft 365: email, files, and Teams. In SharePoint, I build lists and Power Automate flows that give teams control of their own processes.</p>
       </div>
       <div class="hud card">
         <div class="idx">A-03</div>
@@ -461,27 +467,17 @@
       <div class="hud card">
         <div class="idx">A-04</div>
         <h3>Security hardening</h3>
-        <p>Defense in layers, built together with each client: we agree on the policies up front, and nothing changes without their sign-off. I've brought every one of our clients onto MFA and set up patching schedules in N-able RMM across their networks.</p>
+        <p>Defense in layers: I've brought every one of our clients onto MFA and set up patching schedules in N-able RMM. Each layer is agreed with the client up front, and nothing changes without their sign-off.</p>
       </div>
       <div class="hud card">
         <div class="idx">A-05</div>
-        <h3>SharePoint</h3>
-        <p>I migrate users into SharePoint, then use Power Automate to take repetitive tasks off their plate and SharePoint lists to help teams take control of their own internal processes.</p>
+        <h3>Backup &amp; disaster recovery</h3>
+        <p>I build backup policies with each client, then walk them through what a full disaster recovery test looks like: RTOs, RPOs, and how to harden the setup.</p>
       </div>
       <div class="hud card">
         <div class="idx">A-06</div>
-        <h3>Backup &amp; disaster recovery</h3>
-        <p>I sit down with clients to build a backup policy that keeps all their data safe, then walk them through what a full disaster recovery test involves: RTOs, RPOs, and the steps we can take to harden the setup.</p>
-      </div>
-      <div class="hud card">
-        <div class="idx">A-07</div>
-        <h3>Windows Server</h3>
-        <p>For clients that still need on-prem compute, I manage their file servers with Active Directory, keep machines in line with Group Policy, and use Entra Connect to tie on-prem AD into Entra ID.</p>
-      </div>
-      <div class="hud card">
-        <div class="idx">A-08</div>
         <h3>AI</h3>
-        <p>Claude and ChatGPT are part of my everyday toolkit, from troubleshooting to vibe coding my own tools and web apps that automate repetitive tasks.</p>
+        <p>Claude and ChatGPT are part of my everyday toolkit, from troubleshooting to building my own tools and web apps that automate repetitive tasks.</p>
       </div>
     </div>
   </section>
@@ -506,7 +502,7 @@
       <div class="hud card">
         <div class="idx">P-03</div>
         <h3>stephanie-elder.com</h3>
-        <p>This site. Plain HTML and CSS.</p>
+        <p>This site, designed and built with Claude Code. Plain HTML, CSS, and JavaScript, no frameworks, and a pixel bunny hiding somewhere.</p>
         <span class="tag">you're here</span>
       </div>
     </div>
@@ -519,7 +515,7 @@
     <ul class="hud path">
       <li><span class="when">2003</span><span>Claimed the family computer as my own, and hauled an eMachines desktop to my relatives' house to play games online and explore. It was all over from there.</span></li>
       <li><span class="when">2015</span><span>Started at Southwestern Michigan College, and by 2016 I was running the IT Club.</span></li>
-      <li><span class="when">2017</span><span>Started at a local MSP as an intern and worked my way up to team lead and the point of contact for 20+ companies.</span></li>
+      <li><span class="when">2017</span><span>Joined a local MSP as an intern and worked my way up to team lead and the point of contact for 20+ companies.</span></li>
       <li><span class="when">now</span><span>Still learning, still tinkering, still growing.</span></li>
     </ul>
   </section>
@@ -542,10 +538,9 @@
     <div class="label"><svg aria-hidden="true"><use href="#glyph"/></svg>06 // say hi</div>
     <h2 id="hi-title">Say hi<span class="bunny-anchor" aria-hidden="true"><span class="bunny" id="bunny"></span></span></h2>
     <div class="hud hi">
-      <!-- TODO: put your LinkedIn profile URL in the href below -->
       <p>
         Want to get in touch? Drop me a message with the form below. You can also find me on
-        <a class="ph" href="#" target="_blank" rel="noopener noreferrer">LinkedIn</a>.
+        <a href="https://www.linkedin.com/in/stephanie-elder-847380136" target="_blank" rel="noopener noreferrer">LinkedIn</a>.
       </p>
       <!-- Contact form, sent through Formspree (AJAX via fetch below; still works as a plain POST without JS) -->
       <form class="contact" id="contactForm" action="https://formspree.io/f/mljgwvoj" method="POST">
@@ -572,7 +567,6 @@
     <div class="small">
       <span class="mono">© 2026 Stephanie Elder</span>
       <span class="toggles">
-        <button class="tog" id="phToggle">hide placeholders</button>
         <button class="tog" id="motionToggle" aria-pressed="true">motion: on</button>
       </span>
     </div>

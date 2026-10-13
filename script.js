@@ -4,15 +4,6 @@ const store = {
 };
 const body = document.body;
 
-/* placeholders toggle */
-const phBtn = document.getElementById('phToggle');
-function applyPh(clean) {
-  body.classList.toggle('clean', clean);
-  phBtn.textContent = clean ? 'show placeholders' : 'hide placeholders';
-}
-applyPh(store.get('clean') === '1');
-phBtn.onclick = () => { const c = !body.classList.contains('clean'); applyPh(c); store.set('clean', c ? '1' : '0'); };
-
 /* 8-bit bunny, drawn from a pixel map (mid-leap, side view: O outline, W fur, S shade/far limbs, P inner ear, T tail, E eye, X eye shine, B blush, N nose) */
 (() => {
   const map = [
@@ -63,7 +54,11 @@ document.addEventListener('click', e => {
   if (!target) return;
   e.preventDefault();
   (target.closest('.reveal') || target).classList.add('in');
-  target.scrollIntoView({ behavior: body.classList.contains('still') ? 'auto' : 'smooth', block: 'start' });
+  // measure the layout position (offsetTop ignores the fade-in slide), and leave room for the sticky menu
+  let y = 0;
+  for (let el = target; el; el = el.offsetParent) y += el.offsetTop;
+  const pad = document.querySelector('.navbar').offsetHeight + 10;
+  window.scrollTo({ top: Math.max(0, y - pad), behavior: body.classList.contains('still') ? 'instant' : 'smooth' });
   try { if (location.protocol.startsWith('http')) history.pushState(null, '', '#' + id); } catch {}
 });
 
